@@ -4,19 +4,25 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import selenium.pages.LoadingColor;
 
 import java.io.File;
 import java.util.concurrent.TimeUnit;
+import static org.junit.Assert.*;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class Sample9Task {
     WebDriver driver;
+    static LoadingColor loadingColor;
 
     @Before
     public void openPage() {
@@ -31,37 +37,70 @@ public class Sample9Task {
         driver.close();
     }
 
+
     @Test
     public void loadGreenSleep() throws Exception {
+
+        loadingColor = PageFactory.initElements(driver, LoadingColor.class);
+
 //         TODO:
 //         * 1) click on start loading green button
+        loadingColor.clickStartGreen();
 //         * 2) check that button does not appear,
 //         * but loading text is seen instead   "Loading green..."
+        assertFalse(loadingColor.isStartGreenDisplayed());
+        assertTrue(loadingColor.isLoadingGreenDisplayed());
+        assertEquals("Loading green...", loadingColor.getLoadingGreenText());
 //         * 3) check that both button
 //         * and loading text is not seen,
+        Thread.sleep(5000);
+        assertFalse(loadingColor.isStartGreenDisplayed());
+        assertFalse(loadingColor.isLoadingGreenDisplayed());
 //         * success is seen instead "Green Loaded"
+        assertTrue(loadingColor.isFinishingGreenDisplayed());
+        assertEquals("Green Loaded", loadingColor.getFinishingGreenText());
     }
 
     @Test
     public void loadGreenImplicit() throws Exception {
 //         TODO:
 //         * 1) click on start loading green button
+        driver.findElement(By.id("start_green")).click();
 //         * 2) check that button does not appear,
+        assertFalse(driver.findElement(By.id("start_green")).isDisplayed());
 //         * but loading text is seen instead   "Loading green..."
+        assertTrue(driver.findElement(By.id("loading_green")).isDisplayed());
+        assertEquals("Loading green...", driver.findElement(By.id("loading_green")).getText());
 //         * 3) check that both button
 //         * and loading text is not seen,
+        driver.manage().timeouts().implicitlyWait(8,TimeUnit.SECONDS);
+        driver.findElement(By.id("finish_green"));
+        assertFalse(driver.findElement(By.id("start_green")).isDisplayed());
+        assertFalse(driver.findElement(By.id("loading_green")).isDisplayed());
 //         * success is seen instead "Green Loaded"
+        assertTrue(driver.findElement(By.id("finish_green")).isDisplayed());
+        assertEquals("Green Loaded", driver.findElement(By.id("finish_green")).getText());
     }
 
     @Test
     public void loadGreenExplicitWait() throws Exception {
 //         TODO:
+        WebDriverWait wait = (WebDriverWait) new WebDriverWait(driver,5).ignoring(StaleElementReferenceException.class);
 //         * 1) click on start loading green button
+        driver.findElement(By.id("start_green")).click();
 //         * 2) check that button does not appear,
+        assertFalse(driver.findElement(By.id("start_green")).isDisplayed());
 //         * but loading text is seen instead   "Loading green..."
+        assertTrue(driver.findElement(By.id("loading_green")).isDisplayed());
+        assertEquals("Loading green...", driver.findElement(By.id("loading_green")).getText());
 //         * 3) check that both button
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.id("finish_green")));
+        assertFalse(driver.findElement(By.id("start_green")).isDisplayed());
+        assertFalse(driver.findElement(By.id("loading_green")).isDisplayed());
 //         * and loading text is not seen,
 //         * success is seen instead "Green Loaded"
+        assertTrue(driver.findElement(By.id("finish_green")).isDisplayed());
+        assertEquals("Green Loaded", driver.findElement(By.id("finish_green")).getText());
     }
 
     @Test
