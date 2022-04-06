@@ -194,13 +194,13 @@ public class Task2 {
         driver.findElement(By.xpath("//*[@class='w3-btn w3-red w3-xlarge']")).click();
 //         check fields are filled correctly
 
-        String placeholderValueName = driver.findElement(By.id("fb_name")).getAttribute("placeholder");
-        String expectedPlaceholderValueName = "Name";
-        assertEquals(expectedPlaceholderValueName,driver.findElement(By.id("fb_name")).getAttribute("placeholder"));
+        String placeholderValueName = driver.findElement(By.id("fb_name")).getAttribute("value");
+        String expectedPlaceholderValueName = "TEST";
+        assertEquals(expectedPlaceholderValueName,driver.findElement(By.id("fb_name")).getAttribute("value"));
 
-        String placeholderValueAge = driver.findElement(By.id("fb_age")).getAttribute("placeholder");
-        String expectedPlaceholderValueAge = "Age";
-        assertEquals(expectedPlaceholderValueName,driver.findElement(By.id("fb_name")).getAttribute("placeholder"));
+        String placeholderValueAge = driver.findElement(By.id("fb_age")).getAttribute("value");
+        String expectedPlaceholderValueAge = "35";
+        assertEquals(expectedPlaceholderValueName,driver.findElement(By.id("fb_name")).getAttribute("value"));
 
 
         String placeholderValueLang = driver.findElement(By.xpath("//*[@id='lang_check']/*[2]")).getAttribute("value");
